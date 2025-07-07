@@ -63,42 +63,37 @@
   <div id="resultat"></div>
 
   <script>
-    function calculerTaille() {
-      const taille = parseInt(document.getElementById("taille").value);
-      const poids = parseInt(document.getElementById("poids").value);
-      const resultat = document.getElementById("resultat");
+function calculerTaille() {
+  const taille = parseInt(document.getElementById("taille").value);
+  const poids = parseInt(document.getElementById("poids").value);
+  const resultat = document.getElementById("resultat");
 
-      if (isNaN(taille) || isNaN(poids) || taille < 110 || poids < 18) {
-        resultat.innerHTML = '<div class="result-box">⚠️ Valeurs invalides<br><small>(Taille ≥110cm, Poids ≥18kg)</small></div>';
-        return;
-      }
+  // Debug : Affiche les valeurs dans la console
+  console.log("Taille:", taille, "Poids:", poids); 
 
-      const tailles = [
-        { nom: "6 ans", alias: "05", min_cm: 110, max_cm: 145, min_kg: 18, max_kg: 22 },
-        // ... (ton tableau existant)
-      ];
+  if (isNaN(taille) || isNaN(poids)) {
+    resultat.innerHTML = "⚠️ Veuillez entrer des nombres valides";
+    return;
+  }
 
-      let match = tailles.find(t => 
-        taille >= t.min_cm && taille <= t.max_cm && 
-        poids >= t.min_kg && poids <= t.max_kg
-      );
+  const tailles = [
+    { nom: "6 ans", alias: "05", min_cm: 110, max_cm: 145, min_kg: 18, max_kg: 22 },
+    // ... (copie ton tableau existant ici)
+  ];
 
-      if (!match) {
-        match = tailles.reduce((prev, curr) => 
-          Math.abs(taille - ((curr.min_cm + curr.max_cm)/2) < Math.abs(taille - ((prev.min_cm + prev.max_cm)/2)) ? curr : prev
-        );
-      }
+  const match = tailles.find(t => 
+    taille >= t.min_cm && 
+    taille <= t.max_cm && 
+    poids >= t.min_kg && 
+    poids <= t.max_kg
+  );
 
-      resultat.innerHTML = `
-        <div class="result-box">
-          <strong>Taille recommandée :</strong> ${match.nom} (${match.alias})<br>
-          <small>${(taille >= match.min_cm && taille <= match.max_cm && peso >= match.min_kg && peso <= match.max_kg) 
-            ? "✅ Correspondance exacte" 
-            : "🔍 Basé sur la taille (vérifiez les mesures)"}
-          </small>
-        </div>
-      `;
-    }
+  if (match) {
+    resultat.innerHTML = `✅ Taille recommandée : <strong>${match.nom}</strong> (${match.alias})`;
+  } else {
+    resultat.innerHTML = "🔍 Aucune taille standard ne correspond. Essayez des valeurs entre 110-205 cm et 18-105 kg.";
+  }
+}
   </script>
 </body>
 </html>
