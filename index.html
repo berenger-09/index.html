@@ -100,13 +100,13 @@
 
     // 2. Si non trouvé : approximation par taille
     if (!match) {
-      match = tailles.find(t => taille >= t.min_cm && taille <= t.max_cm);
+      match = poids.find(t => poids >= t.min_kg && poids <= t.max_kg);
     }
 
     // 3. Si toujours rien : trouve la plus proche
     if (!match) {
-      match = tailles.reduce((prev, curr) => 
-        Math.abs(taille - (curr.min_cm + curr.max_cm)/2) < Math.abs(taille - (prev.min_cm + prev.max_cm)/2) ? curr : prev
+      match = poids.reduce((prev, curr) => 
+        Math.abs(poids - (curr.min_kg + curr.max_kg)/2) < Math.abs(poids - (prev.min_kg + prev.max_kg)/2) ? curr : prev
       );
     }
 
