@@ -2,85 +2,93 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guide Taille Combi Seland (Homme & Enfant)</title>
-  <link rel="icon" type="image/png" href="fd8418be-99b7-4ce2-b63f-0990bde20524.png">
-  <link rel="apple-touch-icon" href="fd8418be-99b7-4ce2-b63f-0990bde20524.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Guide Taille Combi Seland</title>
+  <!-- Icône écran d'accueil iOS -->
+  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <style>
     body {
-      font-family: sans-serif;
-      background-color: #f4f4f4;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       padding: 20px;
       max-width: 600px;
-      margin: auto;
+      margin: 0 auto;
+      background-color: #f9f9f9;
     }
-    h1 {
-      text-align: center;
-    }
-    label, input {
-      display: block;
+    input, button {
       width: 100%;
+      padding: 15px;
       margin-bottom: 15px;
-      font-size: 1.1em;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-sizing: border-box;
     }
     button {
-      width: 100%;
-      padding: 10px;
-      font-size: 1.2em;
-      background-color: #007BFF;
+      background-color: #007AFF;
       color: white;
       border: none;
-      border-radius: 5px;
-    }
-    #resultat {
-      margin-top: 20px;
       font-weight: bold;
-      font-size: 1.2em;
-      text-align: center;
+    }
+    .result-box {
+      padding: 15px;
+      background: #f0f8ff;
+      border-radius: 10px;
+      margin-top: 20px;
+      border: 1px solid #d0e3ff;
     }
   </style>
 </head>
 <body>
-  <h1>Taille Combi Seland (Homme & Enfant)</h1>
-
-  <label for="taille">Taille (cm) :</label>
-  <input type="number" id="taille" placeholder="ex: 145">
-
-  <label for="poids">Poids (kg) :</label>
-  <input type="number" id="poids" placeholder="ex: 40">
-
-  <button onclick="calculerTaille()">Obtenir la taille recommandée</button>
-
+  <h1>Guide Taille Seland</h1>
+  
+  <label for="taille">Taille (cm)</label>
+  <input type="number" id="taille" placeholder="ex: 145" min="110">
+  
+  <label for="poids">Poids (kg)</label>
+  <input type="number" id="poids" placeholder="ex: 40" min="18">
+  
+  <button onclick="calculerTaille()">Valider</button>
+  
   <div id="resultat"></div>
 
   <script>
     function calculerTaille() {
       const taille = parseInt(document.getElementById("taille").value);
       const poids = parseInt(document.getElementById("poids").value);
+      const resultat = document.getElementById("resultat");
+
+      if (isNaN(taille) || isNaN(poids) || taille < 110 || poids < 18) {
+        resultat.innerHTML = '<div class="result-box">⚠️ Valeurs invalides<br><small>(Taille ≥110cm, Poids ≥18kg)</small></div>';
+        return;
+      }
 
       const tailles = [
         { nom: "6 ans", alias: "05", min_cm: 110, max_cm: 145, min_kg: 18, max_kg: 22 },
-        { nom: "8 ans", alias: "04", min_cm: 120, max_cm: 150, min_kg: 22, max_kg: 28 },
-        { nom: "10 ans", alias: "03", min_cm: 130, max_cm: 155, min_kg: 28, max_kg: 34 },
-        { nom: "12 ans", alias: "02", min_cm: 135, max_cm: 160, min_kg: 34, max_kg: 39 },
-        { nom: "3XS", alias: "01", min_cm: 140, max_cm: 170, min_kg: 40, max_kg: 45 },
-        { nom: "2XS", alias: "0", min_cm: 140, max_cm: 175, min_kg: 45, max_kg: 50 },
-        { nom: "XS", alias: "1", min_cm: 145, max_cm: 180, min_kg: 50, max_kg: 54 },
-        { nom: "S",  alias: "2", min_cm: 150, max_cm: 185, min_kg: 55, max_kg: 64 },
-        { nom: "M",  alias: "3", min_cm: 155, max_cm: 195, min_kg: 65, max_kg: 74 },
-        { nom: "L",  alias: "4", min_cm: 160, max_cm: 200, min_kg: 75, max_kg: 84 },
-        { nom: "XL", alias: "5", min_cm: 165, max_cm: 205, min_kg: 85, max_kg: 94 },
-        { nom: "XXL", alias: "6", min_cm: 170, max_cm: 205, min_kg: 95, max_kg: 105 }
+        // ... (ton tableau existant)
       ];
 
-      const resultat = document.getElementById("resultat");
-      const match = tailles.find(t => taille >= t.min_cm && taille <= t.max_cm && poids >= t.min_kg && poids <= t.max_kg);
+      let match = tailles.find(t => 
+        taille >= t.min_cm && taille <= t.max_cm && 
+        poids >= t.min_kg && poids <= t.max_kg
+      );
 
-      if (match) {
-        resultat.textContent = `Taille Seland recommandée : ${match.nom} (équivalent : ${match.alias})`;
-      } else {
-        resultat.textContent = "Aucune taille Seland standard trouvée. Vérifiez les mensurations ou utilisez une taille spéciale.";
+      if (!match) {
+        match = tailles.reduce((prev, curr) => 
+          Math.abs(taille - ((curr.min_cm + curr.max_cm)/2) < Math.abs(taille - ((prev.min_cm + prev.max_cm)/2)) ? curr : prev
+        );
       }
+
+      resultat.innerHTML = `
+        <div class="result-box">
+          <strong>Taille recommandée :</strong> ${match.nom} (${match.alias})<br>
+          <small>${(taille >= match.min_cm && taille <= match.max_cm && peso >= match.min_kg && peso <= match.max_kg) 
+            ? "✅ Correspondance exacte" 
+            : "🔍 Basé sur la taille (vérifiez les mesures)"}
+          </small>
+        </div>
+      `;
     }
   </script>
 </body>
