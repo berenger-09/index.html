@@ -61,66 +61,70 @@
   <button type="button" onclick="calculerTaille()">Valider</button>
   
   <div id="resultat"></div>
+<script>
+  function calculerTaille() {
+    const taille = parseInt(document.getElementById("taille").value);
+    const poids = parseInt(document.getElementById("poids").value);
+    const resultat = document.getElementById("resultat");
 
-  <script>
-function calculerTaille() {
-  const taille = parseInt(document.getElementById("taille").value);
-  const poids = parseInt(document.getElementById("poids").value);
-  const resultat = document.getElementById("resultat");
+    // Debug
+    console.log("Taille:", taille, "Poids:", poids);
 
-  // Validation des entrées
-  if (isNaN(taille) || isNaN(poids)) {
-    resultat.innerHTML = "⚠️ Veuillez entrer des nombres valides";
-    return;
-  }
+    if (isNaN(taille) || isNaN(poids)) {
+      resultat.innerHTML = "⚠️ Entrez des nombres valides";
+      return;
+    }
 
-  const tailles = [
-    { nom: "6 ans", alias: "05", min_cm: 110, max_cm: 125, min_kg: 18, max_kg: 22 },
-    { nom: "8 ans", alias: "04", min_cm: 125, max_cm: 135, min_kg: 22, max_kg: 28 },
-    { nom: "10 ans", alias: "03", min_cm: 135, max_cm: 145, min_kg: 28, max_kg: 34 },
-    { nom: "12 ans", alias: "02", min_cm: 145, max_cm: 155, min_kg: 34, max_kg: 39 },
-    { nom: "3XS", alias: "01", min_cm: 150, max_cm: 160, min_kg: 40, max_kg: 45 },
-    { nom: "2XS", alias: "0", min_cm: 155, max_cm: 165, min_kg: 45, max_kg: 50 },
-    { nom: "XS", alias: "1", min_cm: 160, max_cm: 170, min_kg: 50, max_kg: 54 },
-    { nom: "S", alias: "2", min_cm: 165, max_cm: 175, min_kg: 55, max_kg: 64 },
-    { nom: "M", alias: "3", min_cm: 170, max_cm: 185, min_kg: 65, max_kg: 74 },
-    { nom: "L", alias: "4", min_cm: 175, max_cm: 195, min_kg: 75, max_kg: 84 },
-    { nom: "XL", alias: "5", min_cm: 180, max_cm: 200, min_kg: 85, max_kg: 94 },
-    { nom: "XXL", alias: "6", min_cm: 185, max_cm: 205, min_kg: 95, max_kg: 105 }
-  ];
+    const tailles = [
+      { nom: "6 ans", alias: "05", min_cm: 110, max_cm: 125, min_kg: 18, max_kg: 22 },
+      { nom: "8 ans", alias: "04", min_cm: 125, max_cm: 135, min_kg: 22, max_kg: 28 },
+      { nom: "10 ans", alias: "03", min_cm: 135, max_cm: 145, min_kg: 28, max_kg: 34 },
+      { nom: "12 ans", alias: "02", min_cm: 145, max_cm: 155, min_kg: 34, max_kg: 39 },
+      { nom: "3XS", alias: "01", min_cm: 150, max_cm: 160, min_kg: 40, max_kg: 45 },
+      { nom: "2XS", alias: "0", min_cm: 155, max_cm: 165, min_kg: 45, max_kg: 50 },
+      { nom: "XS", alias: "1", min_cm: 160, max_cm: 170, min_kg: 50, max_kg: 54 },
+      { nom: "S", alias: "2", min_cm: 165, max_cm: 175, min_kg: 55, max_kg: 64 },
+      { nom: "M", alias: "3", min_cm: 170, max_cm: 185, min_kg: 65, max_kg: 74 },
+      { nom: "L", alias: "4", min_cm: 175, max_cm: 195, min_kg: 75, max_kg: 84 },
+      { nom: "XL", alias: "5", min_cm: 180, max_cm: 200, min_kg: 85, max_kg: 94 },
+      { nom: "XXL", alias: "6", min_cm: 185, max_cm: 205, min_kg: 95, max_kg: 105 }
+    ];
 
-  // 1. Recherche de correspondance exacte
-  let match = tailles.find(t => 
-    taille >= t.min_cm && taille <= t.max_cm && 
-    poids >= t.min_kg && poids <= t.max_kg
-  );
+    // 1. Recherche exacte
+    let match = tailles.find(t => 
+      taille >= t.min_cm && 
+      taille <= t.max_cm && 
+      poids >= t.min_kg && 
+      poids <= t.max_kg
+    );
 
-  // 2. Si pas de match exact, trouve la taille la plus proche
-  if (!match) {
-    match = tailles.find(t => taille >= t.min_cm && taille <= t.max_cm);
-    
+    // 2. Si non trouvé : approximation par taille
     if (!match) {
-      // Si même la taille ne correspond pas, trouve la plus proche
+      match = tailles.find(t => taille >= t.min_cm && taille <= t.max_cm);
+    }
+
+    // 3. Si toujours rien : trouve la plus proche
+    if (!match) {
       match = tailles.reduce((prev, curr) => 
         Math.abs(taille - (curr.min_cm + curr.max_cm)/2) < Math.abs(taille - (prev.min_cm + prev.max_cm)/2) ? curr : prev
       );
     }
-  }
 
-  if (match) {
-    const isExactMatch = taille >= match.min_cm && taille <= match.max_cm && 
-                         poids >= match.min_kg && poids <= match.max_kg;
-    
-    resultat.innerHTML = `
-      <div class="result-box">
-        <strong>Taille recommandée :</strong> ${match.nom} (${match.alias})<br>
-        <small>${isExactMatch ? "✅ Correspondance exacte" : "⚠️ Approximation - vérifiez les mesures"}</small>
-      </div>
-    `;
-  } else {
-    resultat.innerHTML = "🔍 Aucune taille trouvée. Vérifiez vos mesures.";
+    // Affichage
+    if (match) {
+      const isExact = (taille >= match.min_cm && taille <= match.max_cm && 
+                      poids >= match.min_kg && poids <= match.max_kg);
+      
+      resultat.innerHTML = `
+        <div style="background:#f0f8ff; padding:15px; border-radius:5px; margin-top:20px;">
+          <strong>Taille :</strong> ${match.nom} (${match.alias})<br>
+          <small style="color:${isExact ? 'green' : 'orange'}">
+            ${isExact ? "✅ Correspondance exacte" : "⚠️ Approximation - vérifiez les mesures"}
+          </small>
+        </div>
+      `;
+    }
   }
-}
-  </script>
+</script>
 </body>
 </html>
